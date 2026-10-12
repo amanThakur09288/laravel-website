@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-networx: #727CB6;
+  --color-networx-dark: #505B95;
+  --color-footer: #292F38;
+  --font-sans: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #fff;
+  color: #555;
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  max-width: 100%;
+}
+
+::selection {
+  background: #727CB6;
+  color: #fff;
+}
+
+@keyframes heroFade {
+  from { opacity: 0; transform: scale(1.015); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes heroTextUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-fade {
+  animation: heroFade 700ms ease both;
+}
+
+.hero-text-up {
+  animation: heroTextUp 650ms ease 150ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero-fade,
+  .hero-text-up { animation: none; }
+}
+
+@media (min-width: 768px) {
+  .parallax-fixed {
+    background-attachment: fixed;
+  }
+}
