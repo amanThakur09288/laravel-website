@@ -4,6 +4,8 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import ScrollToTop from "./components/common/ScrollToTop";
 import PageLoader from "./components/common/PageLoader";
+import Courses from "./pages/Courses";
+import CourseDetails from "./pages/CourseDetails";
 
 const Home = lazy(() => import("./pages/Home"));
 const UpcomingBatches = lazy(() => import("./pages/UpcomingBatches"));
@@ -42,6 +44,8 @@ const App = () => {
             <Route path="/services/training" element={<Training />} />
             <Route path="/services/consulting" element={<Consulting />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/courses/:slug" element={<CourseDetails />} />
           </Routes>
         </Suspense>
       </main>

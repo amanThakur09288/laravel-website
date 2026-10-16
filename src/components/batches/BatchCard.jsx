@@ -208,19 +208,23 @@
 
 // export default BatchCard;
 
-
 import { Link } from "react-router-dom";
 
 const formatDate = (date) => {
   if (!date) return "";
 
-  const [year, month, day] = date.split("-");
+  // Works for "2026-10-09" and "2026-10-09T00:00:00.000000Z"
+  const [year, month, day] = String(date).slice(0, 10).split("-").map(Number);
+  const parsedDate = new Date(year, month - 1, day);
+
+  // An invalid date returns empty text instead of crashing the page
+  if (!year || Number.isNaN(parsedDate.getTime())) return "";
 
   return new Intl.DateTimeFormat("en-IN", {
     day: "2-digit",
     month: "short",
     year: "numeric",
-  }).format(new Date(year, month - 1, day));
+  }).format(parsedDate);
 };
 
 const formatTime = (time) => {
@@ -362,7 +366,7 @@ const BatchCard = ({ batch }) => {
         <div className="flex flex-1 flex-col px-[18px] pb-[8px] pt-[18px]">
           {/* Course Name */}
           <h3 className="mb-[3px] text-[18px] font-bold leading-[27px] text-[#444A6D]">
-            {batch.course_name}
+            {batch.course?.course_name}
           </h3>
 
           {/* Batch Name */}
