@@ -6,6 +6,8 @@ import ScrollToTop from "./components/common/ScrollToTop";
 import PageLoader from "./components/common/PageLoader";
 import Courses from "./pages/Courses";
 import CourseDetails from "./pages/CourseDetails";
+import ServiceDetails from "./pages/ServiceDetails";
+import Services from "./pages/Services";
 
 const Home = lazy(() => import("./pages/Home"));
 const UpcomingBatches = lazy(() => import("./pages/UpcomingBatches"));
@@ -37,12 +39,14 @@ const App = () => {
             />
             <Route path="/services/cloud" element={<Cloud />} />
             <Route path="/services/security" element={<Security />} />
+            <Route path="/services/training" element={<Training />} />
+            <Route path="/services/consulting" element={<Consulting />} />
             <Route
               path="/services/web-development"
               element={<WebDevelopment />}
             />
-            <Route path="/services/training" element={<Training />} />
-            <Route path="/services/consulting" element={<Consulting />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/services/:slug" element={<ServiceDetails />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:slug" element={<CourseDetails />} />

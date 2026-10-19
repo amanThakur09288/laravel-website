@@ -1,15 +1,61 @@
 // import { useEffect, useRef, useState } from "react";
-// import { Link, Links } from "react-router-dom";
+// import { Link } from "react-router-dom";
+
+// import { getServices } from "../../api/serviceApi";
 
 // const Header = () => {
 //   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-//   const [servicesOpen, setServicesOpen] = useState(false);
-//   const servicesRef = useRef(null);
+
+//   const [desktopServicesOpen, setDesktopServicesOpen] = useState(false);
+
+//   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+
+//   const [services, setServices] = useState([]);
+//   const [servicesLoading, setServicesLoading] = useState(false);
+//   const [servicesError, setServicesError] = useState("");
+
+//   const desktopServicesRef = useRef(null);
+//   const mobileServicesRef = useRef(null);
+
+//   useEffect(() => {
+//     const fetchServices = async () => {
+//       try {
+//         setServicesLoading(true);
+//         setServicesError("");
+
+//         const response = await getServices();
+
+//         const serviceData = Array.isArray(response.data) ? response.data : [];
+
+//         setServices(serviceData);
+//       } catch (error) {
+//         console.error("Failed to fetch services:", error);
+
+//         setServicesError(
+//           error.response?.data?.message || "Unable to load services.",
+//         );
+//       } finally {
+//         setServicesLoading(false);
+//       }
+//     };
+
+//     fetchServices();
+//   }, []);
 
 //   useEffect(() => {
 //     const handleClickOutside = (event) => {
-//       if (servicesRef.current && !servicesRef.current.contains(event.target)) {
-//         setServicesOpen(false);
+//       if (
+//         desktopServicesRef.current &&
+//         !desktopServicesRef.current.contains(event.target)
+//       ) {
+//         setDesktopServicesOpen(false);
+//       }
+
+//       if (
+//         mobileServicesRef.current &&
+//         !mobileServicesRef.current.contains(event.target)
+//       ) {
+//         setMobileServicesOpen(false);
 //       }
 //     };
 
@@ -20,45 +66,100 @@
 //     };
 //   }, []);
 
-//   const toggleServices = (event) => {
-//     event.preventDefault();
-//     event.stopPropagation();
-
-//     setServicesOpen((prev) => !prev);
-//   };
-
 //   const closeMenus = () => {
-//     setServicesOpen(false);
+//     setDesktopServicesOpen(false);
+//     setMobileServicesOpen(false);
 //     setMobileMenuOpen(false);
 //   };
 
+//   const toggleMobileMenu = () => {
+//     setMobileMenuOpen((prev) => !prev);
+
+//     setDesktopServicesOpen(false);
+//     setMobileServicesOpen(false);
+//   };
+
+//   const toggleDesktopServices = () => {
+//     setDesktopServicesOpen((prev) => !prev);
+//   };
+
+//   const toggleMobileServices = () => {
+//     setMobileServicesOpen((prev) => !prev);
+//   };
+
+//   const renderServices = (isMobile = false) => {
+//     if (servicesLoading) {
+//       return (
+//         <div
+//           className={
+//             isMobile
+//               ? "px-4 py-3 text-sm text-white"
+//               : "px-5 py-3 text-sm text-white"
+//           }
+//         >
+//           Loading services...
+//         </div>
+//       );
+//     }
+
+//     if (servicesError) {
+//       return (
+//         <div
+//           className={
+//             isMobile
+//               ? "px-4 py-3 text-sm text-red-200"
+//               : "px-5 py-3 text-sm text-red-200"
+//           }
+//         >
+//           Unable to load services.
+//         </div>
+//       );
+//     }
+
+//     // No services
+//     if (services.length === 0) {
+//       return (
+//         <div
+//           className={
+//             isMobile
+//               ? "px-4 py-3 text-sm text-white"
+//               : "px-5 py-3 text-sm text-white"
+//           }
+//         >
+//           No services available.
+//         </div>
+//       );
+//     }
+
+//     // Services
+//     return services.map((service, index) => (
+//       <Link
+//         key={service.id}
+//         to={`/services/${service.slug}`}
+//         onClick={closeMenus}
+//         className={`block text-sm text-white hover:bg-[#505B95] ${
+//           isMobile ? "px-4 py-3" : "px-5 py-3"
+//         } ${index !== services.length - 1 ? "border-b border-white/10" : ""}`}
+//       >
+//         {service.service_name}
+//       </Link>
+//     ));
+//   };
+
+//   /*
+//     |--------------------------------------------------------------------------
+//     | JSX
+//     |--------------------------------------------------------------------------
+//     */
+
 //   return (
 //     <header className="w-full">
-//       {/* Top Bar */}
-//       {/* <div className="bg-[#292F38] text-white">
-//         <div className="mx-auto flex max-w-[1170px] justify-end px-4">
-//           <div className="flex">
-//             <a
-//               href="#register"
-//               className="border-l border-white/10 px-4 py-2 text-sm hover:bg-white/5"
-//             >
-//               Register
-//             </a>
-
-//             <a
-//               href="#login"
-//               className="border-l border-r border-white/10 px-4 py-2 text-sm hover:bg-white/5"
-//             >
-//               LogIn
-//             </a>
-//           </div>
-//         </div>
-//       </div> */}
-
-//       {/* Navigation */}
 //       <nav className="relative z-50 bg-[#727CB6]">
 //         <div className="mx-auto flex max-w-[1170px] items-center justify-between px-4">
-//           {/* Logo */}
+//           {/* =====================================================
+//                         LOGO
+//                     ====================================================== */}
+
 //           <Link to="/" onClick={closeMenus} className="block py-3">
 //             <img
 //               src="/images/newntlogo.png"
@@ -67,23 +168,35 @@
 //             />
 //           </Link>
 
+//           {/* =====================================================
+//                         MOBILE HAMBURGER
+//                     ====================================================== */}
+
 //           <button
 //             type="button"
-//             onClick={() => {
-//               setMobileMenuOpen((prev) => !prev);
-//               setServicesOpen(false);
-//             }}
+//             onClick={toggleMobileMenu}
 //             className="rounded border border-white/40 px-3 py-2 text-white md:hidden"
-//             aria-label="Toggle navigation"
+//             aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
+//             aria-expanded={mobileMenuOpen}
+//             aria-controls="mobile-navigation"
 //           >
 //             <span className="block h-0.5 w-6 bg-white"></span>
+
 //             <span className="my-1.5 block h-0.5 w-6 bg-white"></span>
+
 //             <span className="block h-0.5 w-6 bg-white"></span>
 //           </button>
 
-//           {/* Desktop Navigation */}
+//           {/* =====================================================
+//                         DESKTOP NAVIGATION
+//                     ====================================================== */}
+
 //           <div className="hidden md:block">
 //             <ul className="flex items-center">
+//               {/* -------------------------------------------------
+//                                 HOME
+//                             -------------------------------------------------- */}
+
 //               <li>
 //                 <Link
 //                   to="/"
@@ -93,6 +206,11 @@
 //                   Home
 //                 </Link>
 //               </li>
+
+//               {/* -------------------------------------------------
+//                                 COURSES
+//                             -------------------------------------------------- */}
+
 //               <li>
 //                 <Link
 //                   to="/courses"
@@ -102,6 +220,11 @@
 //                   Courses
 //                 </Link>
 //               </li>
+
+//               {/* -------------------------------------------------
+//                                 UPCOMING BATCHES
+//                             -------------------------------------------------- */}
+
 //               <li>
 //                 <Link
 //                   to="/upcoming-batches"
@@ -112,24 +235,30 @@
 //                 </Link>
 //               </li>
 
-//               {/* Services */}
-//               <li ref={servicesRef} className="relative">
+//               {/* -------------------------------------------------
+//                                 SERVICES
+//                             -------------------------------------------------- */}
+
+//               <li ref={desktopServicesRef} className="relative">
 //                 <button
 //                   type="button"
-//                   onClick={toggleServices}
+//                   onClick={toggleDesktopServices}
 //                   className={`flex items-center gap-2 px-5 py-6 text-sm font-semibold uppercase text-white transition ${
-//                     servicesOpen ? "bg-[#505B95]" : "hover:bg-[#505B95]"
+//                     desktopServicesOpen ? "bg-[#505B95]" : "hover:bg-[#505B95]"
 //                   }`}
-//                   aria-expanded={servicesOpen}
+//                   aria-expanded={desktopServicesOpen}
+//                   aria-haspopup="true"
 //                 >
 //                   Services
+//                   {/* Dropdown Arrow */}
 //                   <svg
 //                     className={`h-3 w-3 transition-transform ${
-//                       servicesOpen ? "rotate-180" : ""
+//                       desktopServicesOpen ? "rotate-180" : ""
 //                     }`}
 //                     viewBox="0 0 10 6"
 //                     fill="none"
 //                     xmlns="http://www.w3.org/2000/svg"
+//                     aria-hidden="true"
 //                   >
 //                     <path
 //                       d="M1 1L5 5L9 1"
@@ -141,59 +270,20 @@
 //                   </svg>
 //                 </button>
 
-//                 {/* Desktop Dropdown */}
-//                 {servicesOpen && (
+//                 {/* -------------------------------------------------
+//                                     DESKTOP SERVICES DROPDOWN
+//                                 -------------------------------------------------- */}
+
+//                 {desktopServicesOpen && (
 //                   <div className="absolute left-0 top-full z-[100] min-w-[230px] bg-[#727CB6] shadow-xl">
-//                     <Link
-//                       to="/services/infrastructure-network"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-//                     >
-//                       Infrastructure / Network
-//                     </Link>
-
-//                     <Link
-//                       to="/services/cloud"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-//                     >
-//                       Cloud
-//                     </Link>
-
-//                     <Link
-//                       to="/services/security"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-//                     >
-//                       Security
-//                     </Link>
-
-//                     <Link
-//                       to="/services/web-development"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-//                     >
-//                       Web Development
-//                     </Link>
-
-//                     <Link
-//                       to="/services/training"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-//                     >
-//                       Training
-//                     </Link>
-
-//                     <Link
-//                       to="/services/consulting"
-//                       onClick={closeMenus}
-//                       className="block px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-//                     >
-//                       Consulting
-//                     </Link>
+//                     {renderServices(false)}
 //                   </div>
 //                 )}
 //               </li>
+
+//               {/* -------------------------------------------------
+//                                 CONTACT
+//                             -------------------------------------------------- */}
 
 //               <li>
 //                 <Link
@@ -208,120 +298,20 @@
 //           </div>
 //         </div>
 
-//         {/* Mobile Navigation */}
-//         {/* {mobileMenuOpen && (
-//           <div className="border-t border-white/20 bg-[#727CB6] md:hidden">
-//             <div className="px-4 pb-4">
-//               <a
-//                 href="/"
-//                 onClick={closeMenus}
-//                 className="block border-b border-white/10 py-3 text-sm font-semibold uppercase text-white"
-//               >
-//                 Home
-//               </a>
+//         {/* =========================================================
+//                     MOBILE NAVIGATION
+//                 ========================================================== */}
 
-//               <a
-//                 href="#upcoming-batches"
-//                 onClick={closeMenus}
-//                 className="block border-b border-white/10 py-3 text-sm font-semibold uppercase text-white"
-//               >
-//                 Upcoming Batches
-//               </a>
-
-//               <div ref={servicesRef}>
-//                 <button
-//                   type="button"
-//                   onClick={toggleServices}
-//                   className="flex w-full items-center justify-between border-b border-white/10 py-3 text-left text-sm font-semibold uppercase text-white"
-//                   aria-expanded={servicesOpen}
-//                 >
-//                   <span>Services</span>
-
-//                   <svg
-//                     className={`h-3 w-3 transition-transform ${
-//                       servicesOpen ? "rotate-180" : ""
-//                     }`}
-//                     viewBox="0 0 10 6"
-//                     fill="none"
-//                   >
-//                     <path
-//                       d="M1 1L5 5L9 1"
-//                       stroke="currentColor"
-//                       strokeWidth="1.5"
-//                       strokeLinecap="round"
-//                       strokeLinejoin="round"
-//                     />
-//                   </svg>
-//                 </button>
-
-//                 {servicesOpen && (
-//                   <div className="bg-[#505B95]">
-//                     <a
-//                       href="#infrastructure-network"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Infrastructure / Network
-//                     </a>
-
-//                     <a
-//                       href="#cloud"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Cloud
-//                     </a>
-
-//                     <a
-//                       href="#security"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Security
-//                     </a>
-
-//                     <a
-//                       href="#web-development"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Web Development
-//                     </a>
-
-//                     <a
-//                       href="#training"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Training
-//                     </a>
-
-//                     <a
-//                       href="#consulting"
-//                       onClick={closeMenus}
-//                       className="block px-4 py-3 text-sm text-white"
-//                     >
-//                       Consulting
-//                     </a>
-//                   </div>
-//                 )}
-//               </div>
-
-//               <a
-//                 href="#contact"
-//                 onClick={closeMenus}
-//                 className="block py-3 text-sm font-semibold uppercase text-white"
-//               >
-//                 Contact
-//               </a>
-//             </div>
-//           </div>
-//         )} */}
-//         {/* Mobile Navigation */}
 //         {mobileMenuOpen && (
-//           <div className="border-t border-white/20 bg-[#727CB6] md:hidden">
+//           <div
+//             id="mobile-navigation"
+//             className="border-t border-white/20 bg-[#727CB6] md:hidden"
+//           >
 //             <div className="px-4 pb-4">
-//               {/* Home */}
+//               {/* -------------------------------------------------
+//                                 HOME
+//                             -------------------------------------------------- */}
+
 //               <Link
 //                 to="/"
 //                 onClick={closeMenus}
@@ -330,7 +320,10 @@
 //                 Home
 //               </Link>
 
-//               {/* Courses */}
+//               {/* -------------------------------------------------
+//                                 COURSES
+//                             -------------------------------------------------- */}
+
 //               <Link
 //                 to="/courses"
 //                 onClick={closeMenus}
@@ -339,7 +332,10 @@
 //                 Courses
 //               </Link>
 
-//               {/* Upcoming Batches */}
+//               {/* -------------------------------------------------
+//                                 UPCOMING BATCHES
+//                             -------------------------------------------------- */}
+
 //               <Link
 //                 to="/upcoming-batches"
 //                 onClick={closeMenus}
@@ -348,23 +344,31 @@
 //                 Upcoming Batches
 //               </Link>
 
-//               {/* Mobile Services */}
-//               <div>
+//               {/* -------------------------------------------------
+//                                 MOBILE SERVICES
+//                             -------------------------------------------------- */}
+
+//               <div ref={mobileServicesRef}>
 //                 <button
 //                   type="button"
-//                   onClick={toggleServices}
-//                   className="flex w-full items-center justify-between border-b border-white/10 py-3 text-left text-sm font-semibold uppercase text-white"
-//                   aria-expanded={servicesOpen}
+//                   onClick={toggleMobileServices}
+//                   className={`flex w-full items-center justify-between border-b border-white/10 py-3 text-left text-sm font-semibold uppercase text-white ${
+//                     mobileServicesOpen ? "bg-[#505B95]" : ""
+//                   }`}
+//                   aria-expanded={mobileServicesOpen}
+//                   aria-haspopup="true"
 //                 >
 //                   <span>Services</span>
 
+//                   {/* Dropdown Arrow */}
 //                   <svg
 //                     className={`h-3 w-3 transition-transform ${
-//                       servicesOpen ? "rotate-180" : ""
+//                       mobileServicesOpen ? "rotate-180" : ""
 //                     }`}
 //                     viewBox="0 0 10 6"
 //                     fill="none"
 //                     xmlns="http://www.w3.org/2000/svg"
+//                     aria-hidden="true"
 //                   >
 //                     <path
 //                       d="M1 1L5 5L9 1"
@@ -375,67 +379,10 @@
 //                     />
 //                   </svg>
 //                 </button>
-
-//                 {servicesOpen && (
-//                   <div className="bg-[#505B95]">
-//                     {/* Infrastructure / Network */}
-//                     <Link
-//                       to="/services/infrastructure-network"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Infrastructure / Network
-//                     </Link>
-
-//                     {/* Cloud */}
-//                     <Link
-//                       to="/services/cloud"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Cloud
-//                     </Link>
-
-//                     {/* Security */}
-//                     <Link
-//                       to="/services/security"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Security
-//                     </Link>
-
-//                     {/* Web Development */}
-//                     <Link
-//                       to="/services/web-development"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Web Development
-//                     </Link>
-
-//                     {/* Training */}
-//                     <Link
-//                       to="/services/training"
-//                       onClick={closeMenus}
-//                       className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-//                     >
-//                       Training
-//                     </Link>
-
-//                     {/* Consulting */}
-//                     <Link
-//                       to="/services/consulting"
-//                       onClick={closeMenus}
-//                       className="block px-4 py-3 text-sm text-white"
-//                     >
-//                       Consulting
-//                     </Link>
-//                   </div>
+//                 {mobileServicesOpen && (
+//                   <div className="bg-[#505B95]">{renderServices(true)}</div>
 //                 )}
 //               </div>
-
-//               {/* Contact */}
 //               <Link
 //                 to="/contact"
 //                 onClick={closeMenus}
@@ -456,24 +403,48 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { getServices } from "../../api/serviceApi";
+import { mergeServices } from "../../utils/serviceRoutes";
 const Header = () => {
-  // Mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Desktop Services dropdown
   const [desktopServicesOpen, setDesktopServicesOpen] = useState(false);
 
-  // Mobile Services dropdown
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
-  // Separate refs for desktop and mobile
+  // Services created in the admin panel
+  const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [servicesError, setServicesError] = useState("");
+
   const desktopServicesRef = useRef(null);
   const mobileServicesRef = useRef(null);
 
-  /*
-   * Close desktop Services dropdown
-   * when clicking outside it.
-   */
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setServicesLoading(true);
+        setServicesError("");
+
+        const response = await getServices();
+
+        const serviceData = Array.isArray(response.data) ? response.data : [];
+
+        setServices(serviceData);
+      } catch (error) {
+        console.error("Failed to fetch services:", error);
+
+        setServicesError(
+          error.response?.data?.message || "Unable to load services.",
+        );
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -491,53 +462,86 @@ const Header = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setDesktopServicesOpen(false);
+        setMobileServicesOpen(false);
+      }
+    };
+
+    // "pointerdown" works for mouse AND touch (phones and tablets)
+    document.addEventListener("pointerdown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, []);
 
-  /*
-   * Close everything.
-   */
   const closeMenus = () => {
     setDesktopServicesOpen(false);
     setMobileServicesOpen(false);
     setMobileMenuOpen(false);
   };
 
-  /*
-   * Toggle mobile hamburger menu.
-   */
   const toggleMobileMenu = () => {
     setMobileMenuOpen((prev) => !prev);
 
-    // Always close Services when opening/closing hamburger.
     setDesktopServicesOpen(false);
     setMobileServicesOpen(false);
   };
 
-  /*
-   * Toggle desktop Services.
-   */
   const toggleDesktopServices = () => {
     setDesktopServicesOpen((prev) => !prev);
   };
 
-  /*
-   * Toggle mobile Services.
-   */
   const toggleMobileServices = () => {
     setMobileServicesOpen((prev) => !prev);
   };
 
+  // Static services + admin services
+  const allServices = mergeServices(services);
+
+  const renderServices = (isMobile = false) => {
+    const padding = isMobile ? "px-4 py-3" : "px-5 py-3";
+
+    // Nothing to show: say why
+    if (allServices.length === 0) {
+      const message = servicesLoading
+        ? "Loading services..."
+        : servicesError || "No services available.";
+
+      return (
+        <div
+          className={`${padding} text-sm ${
+            servicesError ? "text-red-200" : "text-white"
+          }`}
+        >
+          {message}
+        </div>
+      );
+    }
+
+    return allServices.map((service, index) => (
+      <Link
+        key={service.id}
+        to={`/services/${service.slug}`}
+        onClick={closeMenus}
+        className={`block text-sm text-white hover:bg-[#505B95] ${padding} ${
+          index !== allServices.length - 1 ? "border-b border-white/10" : ""
+        }`}
+      >
+        {service.name}
+      </Link>
+    ));
+  };
+
   return (
     <header className="w-full">
-      {/* Navigation */}
       <nav className="relative z-50 bg-[#727CB6]">
         <div className="mx-auto flex max-w-[1170px] items-center justify-between px-4">
-          {/* Logo */}
+
           <Link to="/" onClick={closeMenus} className="block py-3">
             <img
               src="/images/newntlogo.png"
@@ -545,8 +549,6 @@ const Header = () => {
               className="h-auto max-h-[55px] w-auto"
             />
           </Link>
-
-          {/* Mobile Hamburger */}
           <button
             type="button"
             onClick={toggleMobileMenu}
@@ -556,16 +558,15 @@ const Header = () => {
             aria-controls="mobile-navigation"
           >
             <span className="block h-0.5 w-6 bg-white"></span>
+
             <span className="my-1.5 block h-0.5 w-6 bg-white"></span>
+
             <span className="block h-0.5 w-6 bg-white"></span>
           </button>
 
-          {/* =========================
-              DESKTOP NAVIGATION
-          ========================== */}
           <div className="hidden md:block">
             <ul className="flex items-center">
-              {/* Home */}
+              {/* HOME */}
               <li>
                 <Link
                   to="/"
@@ -576,7 +577,6 @@ const Header = () => {
                 </Link>
               </li>
 
-              {/* Courses */}
               <li>
                 <Link
                   to="/courses"
@@ -587,7 +587,6 @@ const Header = () => {
                 </Link>
               </li>
 
-              {/* Upcoming Batches */}
               <li>
                 <Link
                   to="/upcoming-batches"
@@ -598,7 +597,6 @@ const Header = () => {
                 </Link>
               </li>
 
-              {/* Services */}
               <li ref={desktopServicesRef} className="relative">
                 <button
                   type="button"
@@ -629,61 +627,15 @@ const Header = () => {
                   </svg>
                 </button>
 
-                {/* Desktop Services Dropdown */}
+                {/* DESKTOP  DROPDOWN */}
                 {desktopServicesOpen && (
-                  <div className="absolute left-0 top-full z-[100] min-w-[230px] bg-[#727CB6] shadow-xl">
-                    <Link
-                      to="/services/infrastructure-network"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-                    >
-                      Infrastructure / Network
-                    </Link>
-
-                    <Link
-                      to="/services/cloud"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-                    >
-                      Cloud
-                    </Link>
-
-                    <Link
-                      to="/services/security"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-                    >
-                      Security
-                    </Link>
-
-                    <Link
-                      to="/services/web-development"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-                    >
-                      Web Development
-                    </Link>
-
-                    <Link
-                      to="/services/training"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-                    >
-                      Training
-                    </Link>
-
-                    <Link
-                      to="/services/consulting"
-                      onClick={closeMenus}
-                      className="block px-5 py-3 text-sm text-white hover:bg-[#505B95]"
-                    >
-                      Consulting
-                    </Link>
+                  <div className="absolute left-0 top-full z-[100] max-h-[70vh] min-w-[230px] overflow-y-auto bg-[#727CB6] shadow-xl">
+                    {renderServices(false)}
                   </div>
                 )}
               </li>
 
-              {/* Contact */}
+              {/* CONTACT */}
               <li>
                 <Link
                   to="/contact"
@@ -697,16 +649,17 @@ const Header = () => {
           </div>
         </div>
 
-        {/* =========================
-            MOBILE NAVIGATION
-        ========================== */}
+        {/* =========================================================
+                    MOBILE NAVIGATION
+                ========================================================== */}
+
         {mobileMenuOpen && (
           <div
             id="mobile-navigation"
             className="border-t border-white/20 bg-[#727CB6] md:hidden"
           >
             <div className="px-4 pb-4">
-              {/* Home */}
+              {/* HOME */}
               <Link
                 to="/"
                 onClick={closeMenus}
@@ -715,7 +668,7 @@ const Header = () => {
                 Home
               </Link>
 
-              {/* Courses */}
+              {/* COURSES */}
               <Link
                 to="/courses"
                 onClick={closeMenus}
@@ -724,7 +677,7 @@ const Header = () => {
                 Courses
               </Link>
 
-              {/* Upcoming Batches */}
+              {/* UPCOMING BATCHES */}
               <Link
                 to="/upcoming-batches"
                 onClick={closeMenus}
@@ -733,7 +686,7 @@ const Header = () => {
                 Upcoming Batches
               </Link>
 
-              {/* Mobile Services */}
+              {/* MOBILE SERVICES */}
               <div ref={mobileServicesRef}>
                 <button
                   type="button"
@@ -746,6 +699,7 @@ const Header = () => {
                 >
                   <span>Services</span>
 
+                  {/* Dropdown Arrow */}
                   <svg
                     className={`h-3 w-3 transition-transform ${
                       mobileServicesOpen ? "rotate-180" : ""
@@ -765,61 +719,14 @@ const Header = () => {
                   </svg>
                 </button>
 
-                {/* Mobile Services Dropdown */}
                 {mobileServicesOpen && (
-                  <div className="bg-[#505B95]">
-                    <Link
-                      to="/services/infrastructure-network"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-                    >
-                      Infrastructure / Network
-                    </Link>
-
-                    <Link
-                      to="/services/cloud"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-                    >
-                      Cloud
-                    </Link>
-
-                    <Link
-                      to="/services/security"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-                    >
-                      Security
-                    </Link>
-
-                    <Link
-                      to="/services/web-development"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-                    >
-                      Web Development
-                    </Link>
-
-                    <Link
-                      to="/services/training"
-                      onClick={closeMenus}
-                      className="block border-b border-white/10 px-4 py-3 text-sm text-white"
-                    >
-                      Training
-                    </Link>
-
-                    <Link
-                      to="/services/consulting"
-                      onClick={closeMenus}
-                      className="block px-4 py-3 text-sm text-white"
-                    >
-                      Consulting
-                    </Link>
+                  <div className="max-h-[60vh] overflow-y-auto bg-[#505B95]">
+                    {renderServices(true)}
                   </div>
                 )}
               </div>
 
-              {/* Contact */}
+              {/* CONTACT */}
               <Link
                 to="/contact"
                 onClick={closeMenus}

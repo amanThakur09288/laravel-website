@@ -1,7 +1,8 @@
 import api from "./axios";
 
 export const getBatches = async () => {
-  const response = await api.get("/batches");
+  // const response = await api.get("/batches");
+  const response = await api.get("/public/batches");
   return response.data;
 };
 
