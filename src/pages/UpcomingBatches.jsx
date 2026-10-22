@@ -11,9 +11,7 @@ import { setBatches } from "../redux/slices/batchSlice";
 
 const UpcomingBatches = () => {
   const dispatch = useDispatch();
-
   const batches = useSelector((state) => state.batches.items);
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -45,7 +43,6 @@ const UpcomingBatches = () => {
 
       <section className="bg-[#f7f7f9] pb-[70px] pt-[50px]">
         <div className="mx-auto w-full max-w-[1170px] px-[15px]">
-          {/* Intro */}
           <div className="mx-auto mb-[35px] max-w-[720px] text-center">
             <h2 className="mb-[12px] text-[22px] font-semibold leading-[30px] text-[#676767]">
               Explore Our Upcoming Training Batches
@@ -58,7 +55,6 @@ const UpcomingBatches = () => {
             </p>
           </div>
 
-          {/* Loading */}
           {loading && (
             <div className="py-[60px] text-center">
               <div className="mx-auto h-[35px] w-[35px] animate-spin rounded-full border-[3px] border-[#ddd] border-t-[#727CB6]" />
@@ -79,7 +75,7 @@ const UpcomingBatches = () => {
           )}
 
           {/* Empty */}
-          {!loading && batches.length === 0 && (
+          {!loading && batches?.length === 0 && (
             <div className="rounded-[4px] bg-white px-[20px] py-[60px] text-center">
               <h3 className="text-[18px] font-semibold text-[#676767]">
                 No upcoming batches right now

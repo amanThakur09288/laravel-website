@@ -541,7 +541,6 @@ const Header = () => {
     <header className="w-full">
       <nav className="relative z-50 bg-[#727CB6]">
         <div className="mx-auto flex max-w-[1170px] items-center justify-between px-4">
-
           <Link to="/" onClick={closeMenus} className="block py-3">
             <img
               src="/images/newntlogo.png"
@@ -574,6 +573,16 @@ const Header = () => {
                   className="block px-5 py-6 text-sm font-semibold uppercase text-white transition hover:bg-[#505B95]"
                 >
                   Home
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/quizzes"
+                  onClick={closeMenus}
+                  className="block px-5 py-6 text-sm font-semibold uppercase text-white transition hover:bg-[#505B95]"
+                >
+                  Quizzes
                 </Link>
               </li>
 
@@ -666,6 +675,13 @@ const Header = () => {
                 className="block border-b border-white/10 py-3 text-sm font-semibold uppercase text-white"
               >
                 Home
+              </Link>
+              <Link
+                to="/quizzes"
+                onClick={closeMenus}
+                className="block border-b border-white/10 py-3 text-sm font-semibold uppercase text-white"
+              >
+                Quizzes
               </Link>
 
               {/* COURSES */}

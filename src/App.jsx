@@ -22,6 +22,11 @@ const Training = lazy(() => import("./pages/services/Training"));
 const Consulting = lazy(() => import("./pages/services/Consulting"));
 const Contact = lazy(() => import("./pages/Contact"));
 
+import Quizzes from "./pages/Quizzes";
+import QuizDetails from "./pages/QuizDetails";
+import QuizAttempt from "./pages/QuizAttempt";
+import QuizResult from "./pages/QuizResult";
+
 const App = () => {
   return (
     <>
@@ -50,6 +55,16 @@ const App = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:slug" element={<CourseDetails />} />
+
+            <Route path="/quizzes" element={<Quizzes />} />
+            <Route path="/quizzes/:id" element={<QuizDetails />} />
+            {/* <Route path="/quiz-attempts/:attemptId" element={<QuizAttempt />} /> */}
+            {/* <Route
+              path="/quiz-attempts/:attemptId/result"
+              element={<QuizResult />}
+            /> */}
+            <Route path="/quiz-results/:attemptId" element={<QuizResult />} />
+            <Route path="/quiz-attempts/:id" element={<QuizAttempt />} />
           </Routes>
         </Suspense>
       </main>
