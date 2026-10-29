@@ -15,16 +15,7 @@ export default function QuizCard({ quiz }) {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[8px] border border-[#e8e8e8] bg-white shadow-[0_3px_15px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
-      {/* --------------------------------------------------------------- */}
-      {/* Top Accent */}
-      {/* --------------------------------------------------------------- */}
-
       <div className="h-[5px] w-full bg-[#727CB6]" />
-
-      {/* --------------------------------------------------------------- */}
-      {/* Card Content */}
-      {/* --------------------------------------------------------------- */}
-
       <div className="flex flex-1 flex-col p-6">
         {/* Header */}
         <div className="mb-4 flex items-start justify-between gap-4">
@@ -54,11 +45,6 @@ export default function QuizCard({ quiz }) {
         <p className="mt-3 line-clamp-3 min-h-[66px] text-[13px] leading-6 text-[#777]">
           {description}
         </p>
-
-        {/* ------------------------------------------------------------- */}
-        {/* Quiz Information */}
-        {/* ------------------------------------------------------------- */}
-
         <div className="mt-5 grid grid-cols-2 gap-3">
           {/* Duration */}
           <div className="rounded-[6px] bg-[#f7f7f9] px-3 py-3">
@@ -97,7 +83,6 @@ export default function QuizCard({ quiz }) {
 
               <div>
                 <p className="text-[11px] text-[#999]">Questions</p>
-
                 <p className="mt-0.5 text-[13px] font-semibold text-[#444]">
                   {questionCount}
                 </p>
