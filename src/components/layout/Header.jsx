@@ -2,7 +2,7 @@
 // import { Link } from "react-router-dom";
 
 // import { getServices } from "../../api/serviceApi";
-
+// import { mergeServices } from "../../utils/serviceRoutes";
 // const Header = () => {
 //   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -10,8 +10,9 @@
 
 //   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
+//   // Services created in the admin panel
 //   const [services, setServices] = useState([]);
-//   const [servicesLoading, setServicesLoading] = useState(false);
+//   const [servicesLoading, setServicesLoading] = useState(true);
 //   const [servicesError, setServicesError] = useState("");
 
 //   const desktopServicesRef = useRef(null);
@@ -59,10 +60,20 @@
 //       }
 //     };
 
-//     document.addEventListener("mousedown", handleClickOutside);
+//     const handleEscape = (event) => {
+//       if (event.key === "Escape") {
+//         setDesktopServicesOpen(false);
+//         setMobileServicesOpen(false);
+//       }
+//     };
+
+//     // "pointerdown" works for mouse AND touch (phones and tablets)
+//     document.addEventListener("pointerdown", handleClickOutside);
+//     document.addEventListener("keydown", handleEscape);
 
 //     return () => {
-//       document.removeEventListener("mousedown", handleClickOutside);
+//       document.removeEventListener("pointerdown", handleClickOutside);
+//       document.removeEventListener("keydown", handleEscape);
 //     };
 //   }, []);
 
@@ -87,79 +98,47 @@
 //     setMobileServicesOpen((prev) => !prev);
 //   };
 
+//   // Static services + admin services
+//   const allServices = mergeServices(services);
+
 //   const renderServices = (isMobile = false) => {
-//     if (servicesLoading) {
+//     const padding = isMobile ? "px-4 py-3" : "px-5 py-3";
+
+//     // Nothing to show: say why
+//     if (allServices.length === 0) {
+//       const message = servicesLoading
+//         ? "Loading services..."
+//         : servicesError || "No services available.";
+
 //       return (
 //         <div
-//           className={
-//             isMobile
-//               ? "px-4 py-3 text-sm text-white"
-//               : "px-5 py-3 text-sm text-white"
-//           }
+//           className={`${padding} text-sm ${
+//             servicesError ? "text-red-200" : "text-white"
+//           }`}
 //         >
-//           Loading services...
+//           {message}
 //         </div>
 //       );
 //     }
 
-//     if (servicesError) {
-//       return (
-//         <div
-//           className={
-//             isMobile
-//               ? "px-4 py-3 text-sm text-red-200"
-//               : "px-5 py-3 text-sm text-red-200"
-//           }
-//         >
-//           Unable to load services.
-//         </div>
-//       );
-//     }
-
-//     // No services
-//     if (services.length === 0) {
-//       return (
-//         <div
-//           className={
-//             isMobile
-//               ? "px-4 py-3 text-sm text-white"
-//               : "px-5 py-3 text-sm text-white"
-//           }
-//         >
-//           No services available.
-//         </div>
-//       );
-//     }
-
-//     // Services
-//     return services.map((service, index) => (
+//     return allServices.map((service, index) => (
 //       <Link
 //         key={service.id}
 //         to={`/services/${service.slug}`}
 //         onClick={closeMenus}
-//         className={`block text-sm text-white hover:bg-[#505B95] ${
-//           isMobile ? "px-4 py-3" : "px-5 py-3"
-//         } ${index !== services.length - 1 ? "border-b border-white/10" : ""}`}
+//         className={`block text-sm text-white hover:bg-[#505B95] ${padding} ${
+//           index !== allServices.length - 1 ? "border-b border-white/10" : ""
+//         }`}
 //       >
-//         {service.service_name}
+//         {service.name}
 //       </Link>
 //     ));
 //   };
-
-//   /*
-//     |--------------------------------------------------------------------------
-//     | JSX
-//     |--------------------------------------------------------------------------
-//     */
 
 //   return (
 //     <header className="w-full">
 //       <nav className="relative z-50 bg-[#727CB6]">
 //         <div className="mx-auto flex max-w-[1170px] items-center justify-between px-4">
-//           {/* =====================================================
-//                         LOGO
-//                     ====================================================== */}
-
 //           <Link to="/" onClick={closeMenus} className="block py-3">
 //             <img
 //               src="/images/newntlogo.png"
@@ -167,11 +146,6 @@
 //               className="h-auto max-h-[55px] w-auto"
 //             />
 //           </Link>
-
-//           {/* =====================================================
-//                         MOBILE HAMBURGER
-//                     ====================================================== */}
-
 //           <button
 //             type="button"
 //             onClick={toggleMobileMenu}
@@ -187,16 +161,9 @@
 //             <span className="block h-0.5 w-6 bg-white"></span>
 //           </button>
 
-//           {/* =====================================================
-//                         DESKTOP NAVIGATION
-//                     ====================================================== */}
-
 //           <div className="hidden md:block">
 //             <ul className="flex items-center">
-//               {/* -------------------------------------------------
-//                                 HOME
-//                             -------------------------------------------------- */}
-
+//               {/* HOME */}
 //               <li>
 //                 <Link
 //                   to="/"
@@ -207,9 +174,15 @@
 //                 </Link>
 //               </li>
 
-//               {/* -------------------------------------------------
-//                                 COURSES
-//                             -------------------------------------------------- */}
+//               <li>
+//                 <Link
+//                   to="/quizzes"
+//                   onClick={closeMenus}
+//                   className="block px-5 py-6 text-sm font-semibold uppercase text-white transition hover:bg-[#505B95]"
+//                 >
+//                   Quizzes
+//                 </Link>
+//               </li>
 
 //               <li>
 //                 <Link
@@ -221,10 +194,6 @@
 //                 </Link>
 //               </li>
 
-//               {/* -------------------------------------------------
-//                                 UPCOMING BATCHES
-//                             -------------------------------------------------- */}
-
 //               <li>
 //                 <Link
 //                   to="/upcoming-batches"
@@ -234,10 +203,6 @@
 //                   Upcoming Batches
 //                 </Link>
 //               </li>
-
-//               {/* -------------------------------------------------
-//                                 SERVICES
-//                             -------------------------------------------------- */}
 
 //               <li ref={desktopServicesRef} className="relative">
 //                 <button
@@ -250,7 +215,6 @@
 //                   aria-haspopup="true"
 //                 >
 //                   Services
-//                   {/* Dropdown Arrow */}
 //                   <svg
 //                     className={`h-3 w-3 transition-transform ${
 //                       desktopServicesOpen ? "rotate-180" : ""
@@ -270,21 +234,15 @@
 //                   </svg>
 //                 </button>
 
-//                 {/* -------------------------------------------------
-//                                     DESKTOP SERVICES DROPDOWN
-//                                 -------------------------------------------------- */}
-
+//                 {/* DESKTOP  DROPDOWN */}
 //                 {desktopServicesOpen && (
-//                   <div className="absolute left-0 top-full z-[100] min-w-[230px] bg-[#727CB6] shadow-xl">
+//                   <div className="absolute left-0 top-full z-[100] max-h-[70vh] min-w-[230px] overflow-y-auto bg-[#727CB6] shadow-xl">
 //                     {renderServices(false)}
 //                   </div>
 //                 )}
 //               </li>
 
-//               {/* -------------------------------------------------
-//                                 CONTACT
-//                             -------------------------------------------------- */}
-
+//               {/* CONTACT */}
 //               <li>
 //                 <Link
 //                   to="/contact"
@@ -308,10 +266,7 @@
 //             className="border-t border-white/20 bg-[#727CB6] md:hidden"
 //           >
 //             <div className="px-4 pb-4">
-//               {/* -------------------------------------------------
-//                                 HOME
-//                             -------------------------------------------------- */}
-
+//               {/* HOME */}
 //               <Link
 //                 to="/"
 //                 onClick={closeMenus}
@@ -319,11 +274,15 @@
 //               >
 //                 Home
 //               </Link>
+//               <Link
+//                 to="/quizzes"
+//                 onClick={closeMenus}
+//                 className="block border-b border-white/10 py-3 text-sm font-semibold uppercase text-white"
+//               >
+//                 Quizzes
+//               </Link>
 
-//               {/* -------------------------------------------------
-//                                 COURSES
-//                             -------------------------------------------------- */}
-
+//               {/* COURSES */}
 //               <Link
 //                 to="/courses"
 //                 onClick={closeMenus}
@@ -332,10 +291,7 @@
 //                 Courses
 //               </Link>
 
-//               {/* -------------------------------------------------
-//                                 UPCOMING BATCHES
-//                             -------------------------------------------------- */}
-
+//               {/* UPCOMING BATCHES */}
 //               <Link
 //                 to="/upcoming-batches"
 //                 onClick={closeMenus}
@@ -344,10 +300,7 @@
 //                 Upcoming Batches
 //               </Link>
 
-//               {/* -------------------------------------------------
-//                                 MOBILE SERVICES
-//                             -------------------------------------------------- */}
-
+//               {/* MOBILE SERVICES */}
 //               <div ref={mobileServicesRef}>
 //                 <button
 //                   type="button"
@@ -379,10 +332,15 @@
 //                     />
 //                   </svg>
 //                 </button>
+
 //                 {mobileServicesOpen && (
-//                   <div className="bg-[#505B95]">{renderServices(true)}</div>
+//                   <div className="max-h-[60vh] overflow-y-auto bg-[#505B95]">
+//                     {renderServices(true)}
+//                   </div>
 //                 )}
 //               </div>
+
+//               {/* CONTACT */}
 //               <Link
 //                 to="/contact"
 //                 onClick={closeMenus}
@@ -401,18 +359,23 @@
 // export default Header;
 
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
+import { logoutStudent } from "../../api/studentAuthApi";
+import { clearStudent } from "../../redux/slices/studentAuthSlice";
 import { getServices } from "../../api/serviceApi";
 import { mergeServices } from "../../utils/serviceRoutes";
+
 const Header = () => {
+  const student = useSelector((state) => state.studentAuth.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const [desktopServicesOpen, setDesktopServicesOpen] = useState(false);
-
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
-  // Services created in the admin panel
   const [services, setServices] = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
   const [servicesError, setServicesError] = useState("");
@@ -427,7 +390,6 @@ const Header = () => {
         setServicesError("");
 
         const response = await getServices();
-
         const serviceData = Array.isArray(response.data) ? response.data : [];
 
         setServices(serviceData);
@@ -469,7 +431,6 @@ const Header = () => {
       }
     };
 
-    // "pointerdown" works for mouse AND touch (phones and tablets)
     document.addEventListener("pointerdown", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
 
@@ -486,27 +447,36 @@ const Header = () => {
   };
 
   const toggleMobileMenu = () => {
-    setMobileMenuOpen((prev) => !prev);
-
+    setMobileMenuOpen((previous) => !previous);
     setDesktopServicesOpen(false);
     setMobileServicesOpen(false);
   };
 
   const toggleDesktopServices = () => {
-    setDesktopServicesOpen((prev) => !prev);
+    setDesktopServicesOpen((previous) => !previous);
   };
 
   const toggleMobileServices = () => {
-    setMobileServicesOpen((prev) => !prev);
+    setMobileServicesOpen((previous) => !previous);
   };
 
-  // Static services + admin services
+  const handleStudentLogout = async () => {
+    try {
+      await logoutStudent();
+    } catch (error) {
+      console.error("Student logout request failed:", error);
+    } finally {
+      dispatch(clearStudent());
+      closeMenus();
+      navigate("/", { replace: true });
+    }
+  };
+
   const allServices = mergeServices(services);
 
   const renderServices = (isMobile = false) => {
     const padding = isMobile ? "px-4 py-3" : "px-5 py-3";
 
-    // Nothing to show: say why
     if (allServices.length === 0) {
       const message = servicesLoading
         ? "Loading services..."
@@ -537,10 +507,49 @@ const Header = () => {
     ));
   };
 
+  const StudentAccountLinks = ({ mobile = false }) => {
+    if (student) {
+      return (
+        <>
+          <Link
+            to="/student/dashboard"
+            onClick={closeMenus}
+            className={
+              mobile
+                ? "text-sm font-semibold text-white"
+                : "text-sm font-semibold text-white hover:underline"
+            }
+          >
+            My Account
+          </Link>
+
+          <button
+            type="button"
+            onClick={handleStudentLogout}
+            className="rounded border border-white/50 px-3 py-2 text-xs font-semibold uppercase text-white hover:bg-[#505B95]"
+          >
+            Logout
+          </button>
+        </>
+      );
+    }
+
+    return (
+      <Link
+        to="/student/login"
+        onClick={closeMenus}
+        className="rounded border border-white/60 px-3 py-2 text-xs font-semibold uppercase text-white hover:bg-[#505B95]"
+      >
+        Student Login
+      </Link>
+    );
+  };
+
   return (
     <header className="w-full">
       <nav className="relative z-50 bg-[#727CB6]">
         <div className="mx-auto flex max-w-[1170px] items-center justify-between px-4">
+          {/* LOGO */}
           <Link to="/" onClick={closeMenus} className="block py-3">
             <img
               src="/images/newntlogo.png"
@@ -548,6 +557,8 @@ const Header = () => {
               className="h-auto max-h-[55px] w-auto"
             />
           </Link>
+
+          {/* MOBILE MENU BUTTON */}
           <button
             type="button"
             onClick={toggleMobileMenu}
@@ -556,16 +567,14 @@ const Header = () => {
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
           >
-            <span className="block h-0.5 w-6 bg-white"></span>
-
-            <span className="my-1.5 block h-0.5 w-6 bg-white"></span>
-
-            <span className="block h-0.5 w-6 bg-white"></span>
+            <span className="block h-0.5 w-6 bg-white" />
+            <span className="my-1.5 block h-0.5 w-6 bg-white" />
+            <span className="block h-0.5 w-6 bg-white" />
           </button>
 
+          {/* DESKTOP NAVIGATION */}
           <div className="hidden md:block">
             <ul className="flex items-center">
-              {/* HOME */}
               <li>
                 <Link
                   to="/"
@@ -606,6 +615,7 @@ const Header = () => {
                 </Link>
               </li>
 
+              {/* SERVICES DROPDOWN */}
               <li ref={desktopServicesRef} className="relative">
                 <button
                   type="button"
@@ -636,7 +646,6 @@ const Header = () => {
                   </svg>
                 </button>
 
-                {/* DESKTOP  DROPDOWN */}
                 {desktopServicesOpen && (
                   <div className="absolute left-0 top-full z-[100] max-h-[70vh] min-w-[230px] overflow-y-auto bg-[#727CB6] shadow-xl">
                     {renderServices(false)}
@@ -644,7 +653,6 @@ const Header = () => {
                 )}
               </li>
 
-              {/* CONTACT */}
               <li>
                 <Link
                   to="/contact"
@@ -654,21 +662,22 @@ const Header = () => {
                   Contact
                 </Link>
               </li>
+
+              {/* STUDENT ACCOUNT */}
+              <li className="flex items-center gap-2 px-3">
+                <StudentAccountLinks />
+              </li>
             </ul>
           </div>
         </div>
 
-        {/* =========================================================
-                    MOBILE NAVIGATION
-                ========================================================== */}
-
+        {/* MOBILE NAVIGATION */}
         {mobileMenuOpen && (
           <div
             id="mobile-navigation"
             className="border-t border-white/20 bg-[#727CB6] md:hidden"
           >
             <div className="px-4 pb-4">
-              {/* HOME */}
               <Link
                 to="/"
                 onClick={closeMenus}
@@ -676,6 +685,7 @@ const Header = () => {
               >
                 Home
               </Link>
+
               <Link
                 to="/quizzes"
                 onClick={closeMenus}
@@ -684,7 +694,6 @@ const Header = () => {
                 Quizzes
               </Link>
 
-              {/* COURSES */}
               <Link
                 to="/courses"
                 onClick={closeMenus}
@@ -693,7 +702,6 @@ const Header = () => {
                 Courses
               </Link>
 
-              {/* UPCOMING BATCHES */}
               <Link
                 to="/upcoming-batches"
                 onClick={closeMenus}
@@ -715,7 +723,6 @@ const Header = () => {
                 >
                   <span>Services</span>
 
-                  {/* Dropdown Arrow */}
                   <svg
                     className={`h-3 w-3 transition-transform ${
                       mobileServicesOpen ? "rotate-180" : ""
@@ -742,7 +749,6 @@ const Header = () => {
                 )}
               </div>
 
-              {/* CONTACT */}
               <Link
                 to="/contact"
                 onClick={closeMenus}
@@ -750,6 +756,11 @@ const Header = () => {
               >
                 Contact
               </Link>
+
+              {/* MOBILE STUDENT ACCOUNT */}
+              <div className="mt-3 flex items-center gap-3">
+                <StudentAccountLinks mobile />
+              </div>
             </div>
           </div>
         )}

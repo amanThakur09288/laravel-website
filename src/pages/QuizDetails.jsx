@@ -1,22 +1,16 @@
 import { useEffect, useState } from "react";
-
-import { Link, useNavigate, useParams } from "react-router-dom";
-
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-
 import { getQuiz, startQuiz } from "../api/quizApi";
-
 import PageHeader from "../components/common/PageHeader";
+import { getCurrentStudent } from "../api/studentAuthApi";
 
 export default function QuizDetails() {
   const { id } = useParams();
-
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [quiz, setQuiz] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   const [starting, setStarting] = useState(false);
 
   useEffect(() => {
@@ -26,18 +20,37 @@ export default function QuizDetails() {
   const loadQuiz = async () => {
     try {
       setLoading(true);
-
       const response = await getQuiz(id);
-
       setQuiz(response?.data || null);
     } catch (error) {
       console.error("Failed to load quiz:", error);
-
       toast.error(error.response?.data?.message || "Unable to load quiz.");
     } finally {
       setLoading(false);
     }
   };
+
+  // const handleStart = async () => {
+  //   if (starting || !quiz) {
+  //     return;
+  //   }
+
+  //   try {
+  //     setStarting(true);
+
+  //     const response = await startQuiz(id);
+
+  //     toast.success("Quiz started successfully.");
+
+  //     navigate(`/quiz-attempts/${response.data.id}`);
+  //   } catch (error) {
+  //     console.error("Failed to start quiz:", error);
+
+  //     toast.error(error.response?.data?.message || "Unable to start quiz.");
+  //   } finally {
+  //     setStarting(false);
+  //   }
+  // };
 
   const handleStart = async () => {
     if (starting || !quiz) {
@@ -47,23 +60,58 @@ export default function QuizDetails() {
     try {
       setStarting(true);
 
+      // First check whether a student session exists.
+      const student = await getCurrentStudent();
+
+      // Reject accounts that are not active students.
+      if (!student || student.role !== "user" || student.is_active !== true) {
+        navigate("/student/login", {
+          replace: false,
+          state: {
+            from: location.pathname,
+          },
+        });
+
+        return;
+      }
+
+      // Only authenticated students can start a quiz.
       const response = await startQuiz(id);
+
+      const attemptId = response?.data?.id;
+
+      if (!attemptId) {
+        throw new Error("The server did not return a quiz attempt ID.");
+      }
 
       toast.success("Quiz started successfully.");
 
-      navigate(`/quiz-attempts/${response.data.id}`);
+      navigate(`/quiz-attempts/${attemptId}`);
     } catch (error) {
+      const status = error.response?.status;
+
+      if (status === 401 || status === 419) {
+        navigate("/student/login", {
+          replace: false,
+          state: {
+            from: location.pathname,
+          },
+        });
+
+        return;
+      }
+
       console.error("Failed to start quiz:", error);
 
-      toast.error(error.response?.data?.message || "Unable to start quiz.");
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Unable to start quiz.",
+      );
     } finally {
       setStarting(false);
     }
   };
-
-  /* ------------------------------------------------------------------ */
-  /* Loading */
-  /* ------------------------------------------------------------------ */
 
   if (loading) {
     return (
