@@ -585,7 +585,7 @@ const Header = () => {
                 </Link>
               </li>
 
-              <li>
+              {/* <li>
                 <Link
                   to="/quizzes"
                   onClick={closeMenus}
@@ -593,7 +593,7 @@ const Header = () => {
                 >
                   Quizzes
                 </Link>
-              </li>
+              </li> */}
 
               <li>
                 <Link
@@ -686,13 +686,13 @@ const Header = () => {
                 Home
               </Link>
 
-              <Link
+              {/* <Link
                 to="/quizzes"
                 onClick={closeMenus}
                 className="block border-b border-white/10 py-3 text-sm font-semibold uppercase text-white"
               >
                 Quizzes
-              </Link>
+              </Link> */}
 
               <Link
                 to="/courses"

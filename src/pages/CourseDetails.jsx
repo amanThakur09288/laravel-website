@@ -11,7 +11,6 @@
 // const formatDate = (date) => {
 //   if (!date) return "";
 
-//   // Works for "2026-10-09" and "2026-10-09T00:00:00.000000Z"
 //   const [year, month, day] = String(date).slice(0, 10).split("-").map(Number);
 
 //   if (!year) return "";
@@ -28,12 +27,38 @@
 
 //   const [hours, minutes] = String(time).split(":");
 //   const date = new Date();
+
 //   date.setHours(Number(hours), Number(minutes));
 
 //   return date.toLocaleTimeString("en-IN", {
 //     hour: "2-digit",
 //     minute: "2-digit",
 //   });
+// };
+
+// const formatDuration = (seconds) => {
+//   if (
+//     seconds === null ||
+//     seconds === undefined ||
+//     !Number.isFinite(Number(seconds))
+//   ) {
+//     return "";
+//   }
+
+//   const totalSeconds = Math.floor(Number(seconds));
+
+//   const hours = Math.floor(totalSeconds / 3600);
+//   const minutes = Math.floor((totalSeconds % 3600) / 60);
+//   const remainingSeconds = totalSeconds % 60;
+
+//   if (hours > 0) {
+//     return `${hours}:${String(minutes).padStart(
+//       2,
+//       "0",
+//     )}:${String(remainingSeconds).padStart(2, "0")}`;
+//   }
+
+//   return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 // };
 
 // const getStatusStyle = (status) => {
@@ -48,7 +73,6 @@
 //   return styles[status] || "bg-gray-50 text-gray-700 border-gray-200";
 // };
 
-// // Items can be plain text or objects, always return text
 // const toText = (item) =>
 //   typeof item === "string" ? item : (item?.title ?? item?.name ?? "");
 
@@ -179,14 +203,182 @@
 //   );
 // };
 
-// // One upcoming batch of this course
+// /*
+// |--------------------------------------------------------------------------
+// | Video Lesson
+// |--------------------------------------------------------------------------
+// */
+
+// const VideoLessonItem = ({ lesson, active, onSelect }) => {
+//   const duration = formatDuration(lesson?.duration_seconds);
+
+//   return (
+//     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+//       {active && lesson?.video_url && (
+//         <div className="border-b border-gray-200 bg-black">
+//           <video
+//             key={lesson.id}
+//             src={lesson.video_url}
+//             controls
+//             playsInline
+//             preload="metadata"
+//             controlsList="nodownload"
+//             disablePictureInPicture
+//             className="aspect-video w-full bg-black"
+//             onContextMenu={(event) => event.preventDefault()}
+//           >
+//             Your browser does not support HTML5 video.
+//           </video>
+//         </div>
+//       )}
+
+//       <button
+//         type="button"
+//         onClick={onSelect}
+//         className="flex w-full items-center gap-4 px-5 py-4 text-left transition hover:bg-gray-50"
+//       >
+//         <span
+//           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
+//             active
+//               ? "bg-[#727CB6] text-white"
+//               : "bg-[#727CB6]/10 text-[#727CB6]"
+//           }`}
+//         >
+//           {active ? "▶" : "▶"}
+//         </span>
+
+//         <span className="min-w-0 flex-1">
+//           <span className="block font-semibold text-gray-800">
+//             {lesson?.title}
+//           </span>
+
+//           {lesson?.description && (
+//             <span className="mt-1 block text-sm leading-6 text-gray-500">
+//               {lesson.description}
+//             </span>
+//           )}
+//         </span>
+
+//         <span className="flex shrink-0 items-center gap-2">
+//           {lesson?.is_preview && (
+//             <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+//               Preview
+//             </span>
+//           )}
+
+//           {duration && (
+//             <span className="text-xs font-medium text-gray-400">
+//               {duration}
+//             </span>
+//           )}
+//         </span>
+//       </button>
+//     </div>
+//   );
+// };
+
+// /*
+// |--------------------------------------------------------------------------
+// | Video Section
+// |--------------------------------------------------------------------------
+// */
+
+// const VideoSectionItem = ({ section }) => {
+//   const [open, setOpen] = useState(false);
+//   const [activeLessonId, setActiveLessonId] = useState(null);
+
+//   const lessons = toArray(section?.lessons);
+
+//   const handleLessonSelect = (lesson) => {
+//     if (!lesson?.video_url) {
+//       return;
+//     }
+
+//     setActiveLessonId((previous) =>
+//       previous === lesson.id ? null : lesson.id,
+//     );
+//   };
+
+//   return (
+//     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+//       <button
+//         type="button"
+//         onClick={() => setOpen((previous) => !previous)}
+//         className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition hover:bg-gray-50 sm:px-6"
+//         aria-expanded={open}
+//       >
+//         <div className="flex min-w-0 items-center gap-4">
+//           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#727CB6] text-sm font-bold text-white">
+//             {String(section?.sort_order ?? 1).padStart(2, "0")}
+//           </span>
+
+//           <div className="min-w-0">
+//             <h3 className="truncate font-bold text-gray-900">
+//               {section?.title}
+//             </h3>
+
+//             <p className="mt-1 text-xs text-gray-500">
+//               {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"}
+//             </p>
+//           </div>
+//         </div>
+
+//         <span
+//           className={`shrink-0 text-xl text-gray-400 transition-transform ${
+//             open ? "rotate-180" : ""
+//           }`}
+//         >
+//           ⌄
+//         </span>
+//       </button>
+
+//       {open && (
+//         <div className="border-t border-gray-100 bg-gray-50 p-4 sm:p-5">
+//           {section?.description && (
+//             <p className="mb-4 text-sm leading-6 text-gray-600">
+//               {section.description}
+//             </p>
+//           )}
+
+//           {lessons.length > 0 ? (
+//             <div className="space-y-3">
+//               {lessons.map((lesson) => (
+//                 <VideoLessonItem
+//                   key={lesson.id}
+//                   lesson={lesson}
+//                   active={activeLessonId === lesson.id}
+//                   onSelect={() => handleLessonSelect(lesson)}
+//                 />
+//               ))}
+//             </div>
+//           ) : (
+//             <div className="rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center">
+//               <p className="text-sm text-gray-500">
+//                 No video lessons are available in this section.
+//               </p>
+//             </div>
+//           )}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// /*
+// |--------------------------------------------------------------------------
+// | One upcoming batch of this course
+// |--------------------------------------------------------------------------
+// */
+
 // const BatchItem = ({ batch }) => {
 //   const isSoldOut = batch.status === "Sold Out";
 //   const hasDiscount = Number(batch.discounted_fee) > 0;
 
 //   const timing =
 //     batch.class_start_time && batch.class_end_time
-//       ? `${formatTime(batch.class_start_time)} - ${formatTime(batch.class_end_time)}`
+//       ? `${formatTime(batch.class_start_time)} - ${formatTime(
+//           batch.class_end_time,
+//         )}`
 //       : "";
 
 //   const details = [
@@ -269,9 +461,11 @@
 //   );
 // };
 
-// /* =====================================================
-//    PAGE
-// ===================================================== */
+// /*
+// |--------------------------------------------------------------------------
+// | PAGE
+// |--------------------------------------------------------------------------
+// */
 
 // const CourseDetails = () => {
 //   const { slug } = useParams();
@@ -303,7 +497,6 @@
 //     fetchCourse();
 //   }, [slug]);
 
-//   /* ---------- Loading ---------- */
 //   if (loading) {
 //     return (
 //       <section className="flex min-h-[60vh] items-center justify-center bg-gray-50 px-4">
@@ -318,7 +511,6 @@
 //     );
 //   }
 
-//   /* ---------- Not found ---------- */
 //   if (!course) {
 //     return (
 //       <section className="flex min-h-[60vh] items-center justify-center bg-gray-50 px-4">
@@ -346,8 +538,9 @@
 //     );
 //   }
 
-//   /* ---------- Prepare data ---------- */
 //   const batches = toArray(course.batches);
+//   const sections = toArray(course.sections);
+
 //   const learningOutcomes = toList(course.learning_outcomes);
 //   const curriculum = toArray(course.curriculum);
 //   const prerequisites = toList(course.prerequisites);
@@ -357,10 +550,9 @@
 
 //   return (
 //     <div className="bg-gray-50">
-//         <PageHeader title="Courses" />
-//       {/* =====================================================
-//           HERO
-//       ====================================================== */}
+//       <PageHeader title="Courses" />
+
+//       {/* HERO */}
 //       <section className="relative overflow-hidden bg-gradient-to-br from-[#505B95] via-[#727CB6] to-[#858dcc]">
 //         <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-white/10" />
 //         <div className="absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-white/5" />
@@ -429,9 +621,7 @@
 //         </div>
 //       </section>
 
-//       {/* =====================================================
-//           QUICK INFO
-//       ====================================================== */}
+//       {/* QUICK INFO */}
 //       <section className="border-b border-gray-200 bg-white">
 //         <div className="mx-auto grid max-w-[1170px] grid-cols-1 divide-y divide-gray-100 px-4 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
 //           <div className="py-6 sm:px-6">
@@ -464,9 +654,7 @@
 //         </div>
 //       </section>
 
-//       {/* =====================================================
-//           MAIN CONTENT
-//       ====================================================== */}
+//       {/* MAIN CONTENT */}
 //       <main className="mx-auto max-w-[1170px] px-4 py-12">
 //         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
 //           <div className="space-y-12 lg:col-span-2">
@@ -482,6 +670,23 @@
 //                   <p className="whitespace-pre-line text-sm leading-8 text-gray-600 sm:text-base">
 //                     {course.course_description || course.short_description}
 //                   </p>
+//                 </div>
+//               </section>
+//             )}
+
+//             {/* Course Videos */}
+//             {sections.length > 0 && (
+//               <section>
+//                 <SectionTitle
+//                   eyebrow="Course Content"
+//                   title="Video Lessons"
+//                   description="Learn step by step through the video lessons in each course section."
+//                 />
+
+//                 <div className="space-y-4">
+//                   {sections.map((section) => (
+//                     <VideoSectionItem key={section.id} section={section} />
+//                   ))}
 //                 </div>
 //               </section>
 //             )}
@@ -629,9 +834,7 @@
 //             )}
 //           </div>
 
-//           {/* =================================================
-//               SIDEBAR
-//           ================================================== */}
+//           {/* SIDEBAR */}
 //           <aside className="lg:col-span-1">
 //             <div className="space-y-5 lg:sticky lg:top-6">
 //               <div className="rounded-2xl bg-[#292F38] p-6 text-white shadow-xl">
@@ -686,9 +889,7 @@
 //         </div>
 //       </main>
 
-//       {/* =====================================================
-//           FINAL CTA
-//       ====================================================== */}
+//       {/* FINAL CTA */}
 //       <section className="bg-[#727CB6]">
 //         <div className="mx-auto max-w-[1170px] px-4 py-12 text-center sm:py-16">
 //           <h2 className="text-2xl font-bold text-white sm:text-3xl">
@@ -728,6 +929,7 @@ import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { getCourse } from "../api/courseApi";
+import { getQuizzes } from "../api/quizApi";
 import PageHeader from "../components/common/PageHeader";
 
 const formatPrice = (price) =>
@@ -934,7 +1136,7 @@ const FaqItem = ({ faq, index }) => {
 |--------------------------------------------------------------------------
 */
 
-const VideoLessonItem = ({ lesson, active, onSelect }) => {
+const VideoLessonItem = ({ lesson, active, onSelect, quizzes = [] }) => {
   const duration = formatDuration(lesson?.duration_seconds);
 
   return (
@@ -998,6 +1200,56 @@ const VideoLessonItem = ({ lesson, active, onSelect }) => {
           )}
         </span>
       </button>
+
+      {quizzes.length > 0 && (
+        <div className="border-t border-gray-100 bg-[#f8f9fc] px-5 py-4">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            Lesson Quiz{quizzes.length > 1 ? "zes" : ""}
+          </p>
+
+          <div className="space-y-2">
+            {quizzes.map((quiz) => (
+              <div
+                key={quiz.id}
+                className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-gray-800">{quiz.title}</h4>
+
+                  {quiz.description && (
+                    <p className="mt-1 text-sm leading-6 text-gray-500">
+                      {quiz.description}
+                    </p>
+                  )}
+
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                    {Number(quiz.duration_minutes) > 0 && (
+                      <span>⏱ {quiz.duration_minutes} min</span>
+                    )}
+
+                    {quiz.total_marks !== null &&
+                      quiz.total_marks !== undefined && (
+                        <span>⭐ {quiz.total_marks} marks</span>
+                      )}
+
+                    {quiz.questions_count !== null &&
+                      quiz.questions_count !== undefined && (
+                        <span>❓ {quiz.questions_count} questions</span>
+                      )}
+                  </div>
+                </div>
+
+                <Link
+                  to={`/quizzes/${quiz.id}`}
+                  className="inline-flex shrink-0 items-center justify-center rounded-lg bg-[#727CB6] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#505B95]"
+                >
+                  View Quiz
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -1008,7 +1260,7 @@ const VideoLessonItem = ({ lesson, active, onSelect }) => {
 |--------------------------------------------------------------------------
 */
 
-const VideoSectionItem = ({ section }) => {
+const VideoSectionItem = ({ section, courseId, quizzes = [] }) => {
   const [open, setOpen] = useState(false);
   const [activeLessonId, setActiveLessonId] = useState(null);
 
@@ -1067,14 +1319,24 @@ const VideoSectionItem = ({ section }) => {
 
           {lessons.length > 0 ? (
             <div className="space-y-3">
-              {lessons.map((lesson) => (
-                <VideoLessonItem
-                  key={lesson.id}
-                  lesson={lesson}
-                  active={activeLessonId === lesson.id}
-                  onSelect={() => handleLessonSelect(lesson)}
-                />
-              ))}
+              {lessons.map((lesson) => {
+                const lessonQuizzes = quizzes.filter(
+                  (quiz) =>
+                    Number(quiz.course_id) === Number(courseId) &&
+                    Number(quiz.course_section_id) === Number(section.id) &&
+                    Number(quiz.course_lesson_id) === Number(lesson.id),
+                );
+
+                return (
+                  <VideoLessonItem
+                    key={lesson.id}
+                    lesson={lesson}
+                    active={activeLessonId === lesson.id}
+                    onSelect={() => handleLessonSelect(lesson)}
+                    quizzes={lessonQuizzes}
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center">
@@ -1196,30 +1458,62 @@ const CourseDetails = () => {
   const { slug } = useParams();
 
   const [course, setCourse] = useState(null);
+  const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchCourse = async () => {
       try {
         setLoading(true);
 
         const response = await getCourse(slug);
 
-        setCourse(response?.data ?? null);
+        if (!cancelled) {
+          setCourse(response?.data ?? null);
+        }
       } catch (error) {
         console.error("Failed to fetch course:", error);
 
-        setCourse(null);
-
-        toast.error(
-          error?.response?.data?.message || "Unable to load course details.",
-        );
+        if (!cancelled) {
+          setCourse(null);
+          toast.error(
+            error?.response?.data?.message || "Unable to load course details.",
+          );
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
+    const fetchCourseQuizzes = async () => {
+      try {
+        const response = await getQuizzes();
+        const items = Array.isArray(response?.data) ? response.data : [];
+
+        if (!cancelled) {
+          setQuizzes(items);
+        }
+      } catch (error) {
+        // A quiz API failure should not prevent the course and its videos loading.
+        console.error("Failed to fetch course quizzes:", error);
+
+        if (!cancelled) {
+          setQuizzes([]);
+        }
+      }
+    };
+
+    setQuizzes([]);
     fetchCourse();
+    fetchCourseQuizzes();
+
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
   if (loading) {
@@ -1410,7 +1704,12 @@ const CourseDetails = () => {
 
                 <div className="space-y-4">
                   {sections.map((section) => (
-                    <VideoSectionItem key={section.id} section={section} />
+                    <VideoSectionItem
+                      key={section.id}
+                      section={section}
+                      courseId={course.id}
+                      quizzes={quizzes}
+                    />
                   ))}
                 </div>
               </section>

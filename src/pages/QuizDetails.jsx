@@ -65,6 +65,9 @@ export default function QuizDetails() {
 
       // Reject accounts that are not active students.
       if (!student || student.role !== "user" || student.is_active !== true) {
+        toast.error(
+          "You do not have permission to perform this action. Please Log in.",
+        );
         navigate("/student/login", {
           replace: false,
           state: {

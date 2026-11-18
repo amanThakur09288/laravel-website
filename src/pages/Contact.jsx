@@ -3,37 +3,37 @@ import PageHeader from "../components/common/PageHeader";
 import ContactForm from "../components/contact/ContactForm";
 
 const contactDetails = [
-  {
-    title: "Address",
-    value: (
-      <>
-        SCO 11, Industrial Area, Phase 5, Mohali
-        <br />
-        Punjab
-      </>
-    ),
-    icon: (
-      <svg
-        className="h-6 w-6"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      >
-        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-        <circle cx="12" cy="10" r="2.5" />
-      </svg>
-    ),
-  },
+  // {
+  //   title: "Address",
+  //   value: (
+  //     <>
+  //       SCO 11, Industrial Area, Phase 5, Mohali
+  //       <br />
+  //       Punjab
+  //     </>
+  //   ),
+  //   icon: (
+  //     <svg
+  //       className="h-6 w-6"
+  //       viewBox="0 0 24 24"
+  //       fill="none"
+  //       stroke="currentColor"
+  //       strokeWidth="1.8"
+  //     >
+  //       <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+  //       <circle cx="12" cy="10" r="2.5" />
+  //     </svg>
+  //   ),
+  // },
   {
     title: "Email",
     value: (
       <div className="space-y-1">
         <a
-          href="mailto:hr@networx256.com"
+          href="mailto:info@networx256.com"
           className="block transition hover:text-[#727CB6]"
         >
-          hr@networx256.com
+          info@networx256.com
         </a>
 
         <a
@@ -66,13 +66,6 @@ const contactDetails = [
           className="block transition hover:text-[#727CB6]"
         >
           (+91) 9872820553
-        </a>
-
-        <a
-          href="tel:+911725091715"
-          className="block transition hover:text-[#727CB6]"
-        >
-          (+91) 0172-5091715
         </a>
       </div>
     ),
